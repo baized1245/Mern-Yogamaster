@@ -29,18 +29,21 @@ async function run() {
     const database = client.db("yoga-master");
     const usersCollection = database.collection("users");
     const classesCollection = database.collection("classes");
-    const cartsCollection = database.collection("carts");
+    const cartCollection = database.collection("cart");
     const paymentsCollection = database.collection("payments");
     const enrolledCollection = database.collection("enrolled");
     const appliedCollection = database.collection("applied");
 
-    // classes routes
+    // All classes routes
+
+    // Create a new class
     app.post("/new-class", async (req, res) => {
       const newClass = req.body;
       const result = await classesCollection.insertOne(newClass);
       res.send(result);
     });
 
+    // get class by status
     app.get("/classes", async (req, res) => {
       const query = { status: "approved" };
       const result = await classesCollection.find().toArray();
@@ -118,6 +121,53 @@ async function run() {
         updateDoc,
         options
       );
+      res.send(result);
+    });
+
+    // ..................
+    // All Cart Routes
+
+    // Create or post a cart
+    app.post("/add-to-cart", async (req, res) => {
+      const newCartItem = req.body;
+      const result = await cartCollection.insertOne(newCartItem);
+      res.send(result);
+    });
+
+    // get cart item by id
+    app.get("/cart-item/:id", async (req, res) => {
+      const id = req.params.id;
+      const email = req.body.email;
+      const query = {
+        classId: id,
+        userMail: email,
+      };
+      const projection = {
+        classId: 1,
+      };
+      const result = await cartCollection.findOne(query, projection);
+      res.send(result);
+    });
+
+    // cart info by user email
+    app.get("/cart/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { userMail: email };
+      const projection = { classId: 1 };
+      const carts = await cartCollection.find(query, {
+        projection: projection,
+      });
+      const classIds = carts.map((cart) => new ObjectId(cart.classId));
+      const query2 = { _id: { $in: classIds } };
+      const result = await classesCollection.find(query2).toArray();
+      res.send(result);
+    });
+
+    // delete cart item
+    app.delete("/delete-cart-item/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { classId: id };
+      const result = await cartCollection.deleteOne(query);
       res.send(result);
     });
 
