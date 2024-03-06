@@ -89,6 +89,38 @@ async function run() {
       res.send(result);
     });
 
+    // get single class details
+    app.get("/class/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await classesCollection.findOne(query);
+      res.send(result);
+    });
+
+    // update class details (all data)
+    app.put("/update-class/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateClass = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          name: updateClass.name,
+          description: updateClass.description,
+          price: updateClass.price,
+          availableSeats: parseInt(updateClass.availableSeats),
+          videoLink: updateClass.videoLink,
+          status: "pending",
+        },
+      };
+      const result = await classesCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
