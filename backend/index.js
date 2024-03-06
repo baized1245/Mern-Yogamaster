@@ -1,12 +1,12 @@
 const express = require("express");
 const app = express();
+require("dotenv").config();
 const cors = require("cors");
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 // mongodb connection
-const uri =
-  "mongodb+srv://mdbaizedhasans:AeqYboGzlGXTFJch@mern.zy6vr7t.mongodb.net/?retryWrites=true&w=majority&appName=Mern";
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@mern.zy6vr7t.mongodb.net/?retryWrites=true&w=majority&appName=Mern`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -21,6 +21,16 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    // create a database and collections
+    const database = client.db("yoga-master");
+    const usersCollection = database.collection("users");
+    const classesCollection = database.collection("classes");
+    const cartsCollection = database.collection("carts");
+    const paymentsCollection = database.collection("payments");
+    const enrolledCollection = database.collection("enrolled");
+    const appliedCollection = database.collection("applied");
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
