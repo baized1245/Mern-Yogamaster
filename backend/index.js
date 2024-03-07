@@ -334,6 +334,64 @@ async function run() {
       res.send(result);
     });
 
+    // Get all instructor
+
+    app.get("instructors", async (req, res) => {
+      const result = await usersCollection
+        .find({ role: "instructor" })
+        .toArray();
+      res.send(result);
+    });
+
+    app.get("/enrolled-classes/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { userEmail: email };
+      const pipeline = [
+        {
+          $match: query,
+        },
+        {
+          $lookup: {
+            from: "classes",
+            localField: "classesId",
+            foreignField: "_id",
+            as: "classes",
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "classes.instructorEmail",
+            foreignField: "email",
+            as: "instructor",
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            $arrayElement: ["$instructor", 0],
+          },
+          classes: 1,
+        },
+      ];
+
+      const result = await enrolledCollection.aggregate(pipeline).toArray();
+      res.send(result);
+    });
+
+    // applied for instructor
+    app.post("/ass-instructor", async (req, res) => {
+      const data = req.body;
+      const result = await appliedCollection.insertOne(data);
+      res.send(result);
+    });
+
+    app.get("/applied-instructors/:email", async (req, res) => {
+      const email = req.params.email;
+      const result = await appliedCollection.insertOne({ email });
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
