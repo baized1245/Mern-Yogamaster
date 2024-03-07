@@ -37,6 +37,70 @@ async function run() {
 
     // All classes routes
 
+    // routes for users
+    app.post("/new-user", async (req, res) => {
+      const newUser = req.body;
+      const result = await classesCollection.insertOne(newUser);
+      res.send(result);
+    });
+
+    // get all users
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
+
+    // get users by id
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    });
+
+    // get user by email
+    app.get("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    });
+
+    // delete a user
+    app.delete("/delete-user/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    });
+
+    // update a user info
+    app.put("/update-user/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateUser = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          name: updateUser.name,
+          email: updateUser.email,
+          role: updateUser.option,
+          address: updateUser.address,
+          about: updateUser.about,
+          about: updateUser.about,
+          photoUrl: updateUser.photoUrl,
+          skills: updateUser.skills ? updateUser.skills : null,
+        },
+      };
+
+      const result = await usersCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
+
     // Create a new class
     app.post("/new-class", async (req, res) => {
       const newClass = req.body;
