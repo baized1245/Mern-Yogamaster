@@ -1,6 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import UseAxioxFetch from "../../../hooks/UseAxioxFetch";
+import Card from "./Card";
 
 const PopularClasses = () => {
+  const axiosFetch = UseAxioxFetch();
+  const [classes, setClasses] = useState([]);
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      const response = await axiosFetch.get("/classes");
+      //   console.log(response.data);
+      setClasses(response.data);
+    };
+
+    fetchClasses();
+  }, []);
+
+  console.log(classes);
+
   return (
     <div className="md:w-[80%] mx-auto my-28">
       <div>
@@ -13,6 +30,12 @@ const PopularClasses = () => {
             student enrolled
           </p>
         </div>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {classes.slice(0, 6).map((item, index) => (
+          <Card key={index} item={item} />
+        ))}
       </div>
     </div>
   );
