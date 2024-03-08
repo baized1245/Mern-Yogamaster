@@ -1,10 +1,14 @@
+import Gellary from "./Gellary/Gellary";
 import HeroContainer from "./Hero/HeroContainer";
 
 const Home = () => {
   return (
-    <div>
+    <section>
       <HeroContainer />
-    </div>
+      <div className="max-w-screen-xl mx-auto">
+        <Gellary />
+      </div>
+    </section>
   );
 };
 
