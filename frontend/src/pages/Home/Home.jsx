@@ -1,5 +1,6 @@
 import Gellary from "./Gellary/Gellary";
 import HeroContainer from "./Hero/HeroContainer";
+import PopularClasses from "./PopularClasses/PopularClasses";
 
 const Home = () => {
   return (
@@ -7,6 +8,7 @@ const Home = () => {
       <HeroContainer />
       <div className="max-w-screen-xl mx-auto">
         <Gellary />
+        <PopularClasses />
       </div>
     </section>
   );
