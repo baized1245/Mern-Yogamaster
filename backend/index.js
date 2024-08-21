@@ -416,10 +416,15 @@ async function run() {
           },
         },
         {
+          $match: {
+            "instructor.role": "instructor",
+          },
+        },
+        {
           $project: {
             _id: 0,
             instructor: {
-              $arrayElement: ["$instructor", 0],
+              $arrayElemAt: ["$instructor", 0],
             },
             totalEnrolled: 1,
           },
@@ -430,10 +435,9 @@ async function run() {
           },
         },
         {
-          $limit: 6,
+          $limit: 8,
         },
       ];
-
       const result = await classesCollection.aggregate(pipeline).toArray();
       res.send(result);
     });
@@ -467,7 +471,7 @@ async function run() {
 
     // Get all instructor
 
-    app.get("instructors", async (req, res) => {
+    app.get("/instructors", async (req, res) => {
       const result = await usersCollection
         .find({ role: "instructor" })
         .toArray();

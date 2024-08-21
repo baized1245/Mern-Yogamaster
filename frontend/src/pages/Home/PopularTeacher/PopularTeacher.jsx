@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import UseAxioxFetch from "../../hooks/UseAxioxFetch";
+import UseAxioxFetch from "../../../hooks/UseAxioxFetch";
 
-import img from "../../assets/home/girl.jpg";
+import img from "../../../assets/home/girl.jpg";
 
-const Instructors = () => {
+const PopularTeacher = () => {
   const [instructors, setInstructors] = useState([]);
   const axiosFetch = UseAxioxFetch();
   useEffect(() => {
     axiosFetch
-      .get("/instructors")
+      .get("/popular-instructors")
       .then((data) => {
         setInstructors(data.data);
       })
@@ -39,24 +39,23 @@ const Instructors = () => {
             {instructors?.slice(0, 6).map((instructor, index) => (
               <div
                 key={index}
-                className="flex dark:text-white hover:-translate-y-2 duration-300 cursor-pointer flex-col shadow-md py-8 px-8 md:px-8 rounded-md"
+                className="flex dark:text-white hover:-translate-y-2 duration-300 cursor-pointer flex-col shadow-md py-8 px-10 md:px-8 rounded-md"
               >
                 <div className="flex-col flex gap-6 md:gap-8">
                   <img
                     className="rounded-full border-4 border-gray-300 h-24 w-24 mx-auto"
-                    src={instructor?.photoUrl || `${img}`}
+                    src={instructor?.instructor?.photoUrl || `${img}`}
                     alt="instructor"
                   />
                   <div className="flex flex-col text-center">
                     <p className="font-medium text-lg dark:text-white text-gray-800">
-                      {instructor?.name}
+                      {instructor?.instructor.name}
                     </p>
-                    <p className="text-gray-500 ">Instructor</p>
-                    <p className="text-gray-500 mb-4 ">
-                      Address: {instructor?.address}
+                    <p className="text-gray-500 whitespace-nowrap">
+                      Instructor
                     </p>
-                    <p className="text-gray-500 mb-4 ">
-                      Email: {instructor?.email}
+                    <p className="text-gray-500 mb-4 whitespace-nowrap">
+                      Total Students: {instructor?.totalEnrolled}
                     </p>
                   </div>
                 </div>
@@ -71,4 +70,4 @@ const Instructors = () => {
   );
 };
 
-export default Instructors;
+export default PopularTeacher;
