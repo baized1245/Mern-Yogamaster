@@ -17,7 +17,7 @@ const PopularTeacher = () => {
       });
   }, []);
 
-  console.log(instructors);
+  // console.log(instructors);
 
   return (
     <div className="md:w-[80%] mx-auto my-28">

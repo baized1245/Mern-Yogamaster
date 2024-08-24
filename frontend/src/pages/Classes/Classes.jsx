@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import UseAxioxFetch from "../../hooks/UseAxioxFetch";
 import { Transition } from "@headlessui/react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../utilities/providers/AuthProvider";
 
 const Classes = () => {
   const [classes, setClasses] = useState([]);
   const [hoveredCard, setHoverdCard] = useState(null);
   const axiosFetch = UseAxioxFetch();
+
+  const { user } = useContext(AuthContext);
+  // console.log(user);
 
   const handleHover = (index) => {
     setHoverdCard(index);
