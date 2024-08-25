@@ -3,14 +3,18 @@ import UseAxioxFetch from "../../hooks/UseAxioxFetch";
 import { Transition } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../utilities/providers/AuthProvider";
+import useUser from "../../hooks/useUser";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Classes = () => {
   const [classes, setClasses] = useState([]);
+  const { currentUser } = useUser();
+  const role = currentUser?.role;
+  const [enrolledClass, setEnrolledClass] = useState([]);
+
   const [hoveredCard, setHoverdCard] = useState(null);
   const axiosFetch = UseAxioxFetch();
-
-  const { user } = useContext(AuthContext);
-  // console.log(user);
+  const axiosSecure = useAxiosSecure();
 
   const handleHover = (index) => {
     setHoverdCard(index);
@@ -23,7 +27,12 @@ const Classes = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  console.log(classes);
+  // handle add to cart
+  const handleSelect = (id) => {
+    console.log(id);
+  };
+
+  // console.log(classes);
 
   return (
     <div>
@@ -63,7 +72,10 @@ const Classes = () => {
               >
                 <div className="transition duration-300 ease-in data-[closed]:opacity-0">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <button className="px-4 py-2 text-white disabled:bg-red-300 bg-secondary duration-300 rounded hover:bg-red-700">
+                    <button
+                      onClick={() => handleSelect(cls._id)}
+                      className="px-4 py-2 text-white disabled:bg-red-300 bg-secondary duration-300 rounded hover:bg-red-700"
+                    >
                       Add to Cart
                     </button>
                   </div>

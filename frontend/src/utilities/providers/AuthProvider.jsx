@@ -79,9 +79,9 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  //   observer for user
+  // observer for user
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
 
       if (user) {
@@ -103,7 +103,7 @@ const AuthProvider = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
   const contextValue = {
     user,
