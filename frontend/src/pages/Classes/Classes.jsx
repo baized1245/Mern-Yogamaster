@@ -72,8 +72,6 @@ const Classes = () => {
       });
   };
 
-  // console.log(classes);
-
   return (
     <div>
       <div className="mt-20">
