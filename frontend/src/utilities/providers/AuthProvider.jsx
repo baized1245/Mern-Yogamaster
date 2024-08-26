@@ -114,6 +114,8 @@ const AuthProvider = ({ children }) => {
     googleLogin,
     error,
     setError,
+    loader,
+    setLoader,
   };
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

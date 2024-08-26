@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 const Classes = () => {
   const [classes, setClasses] = useState([]);
   const { currentUser } = useUser();
+  // console.log(currentUser);
   const role = currentUser?.role;
   const [enrolledClass, setEnrolledClasses] = useState([]);
 

@@ -92,7 +92,7 @@ async function run() {
     // routes for users
     app.post("/new-user", async (req, res) => {
       const newUser = req.body;
-      const result = await classesCollection.insertOne(newUser);
+      const result = await usersCollection.insertOne(newUser);
       res.send(result);
     });
 
