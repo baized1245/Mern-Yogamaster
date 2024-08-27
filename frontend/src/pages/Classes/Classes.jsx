@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UseAxioxFetch from "../../hooks/UseAxioxFetch";
 import { Transition } from "@headlessui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useUser from "../../hooks/useUser";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { toast } from "react-toastify";
@@ -9,9 +9,10 @@ import { toast } from "react-toastify";
 const Classes = () => {
   const [classes, setClasses] = useState([]);
   const { currentUser } = useUser();
-  // console.log(currentUser);
+  // console.log(currentUser.email);
   const role = currentUser?.role;
-  const [enrolledClass, setEnrolledClasses] = useState([]);
+  const [enrolledClasses, setEnrolledClasses] = useState([]);
+  const navigate = useNavigate();
 
   const [hoveredCard, setHoverdCard] = useState(null);
   const axiosFetch = UseAxioxFetch();
@@ -37,38 +38,27 @@ const Classes = () => {
       .catch((err) => console.log(err));
 
     if (!currentUser) {
-      return toast.error("Please Login First!");
+      alert("Please login first");
+      return navigate("/login");
     }
 
     axiosSecure
-      .get(`cart-item/${id}?email=${currentUser.email}`)
+      .get(`/cart-item/${id}?email${currentUser?.email}`)
       .then((res) => {
-        if (res.data.clasId === id) {
-          return toast.error("Already Selected!");
-        } else if (enrolledClass.find((item) => item.classes._id === id)) {
-          return toast.error("Already Enrolled");
+        if (res.data.classId === id) {
+          return alert("Already selected!");
+        } else if (enrolledClasses.find((item) => item.classes._id === id)) {
+          return alert("Alert enrolled");
         } else {
           const data = {
-            clasId: id,
-            userMail: currentUser.email,
+            classId: id,
+            userMail: currentUser?.email,
             date: new Date(),
           };
-          toast.promise(axiosSecure.post("/add-to-cart", data)).then((res) => {
+          axiosSecure.post("/add-to-cart", data).then((res) => {
+            alert("Added to the cart successfully!");
             console.log(res.data);
-          }),
-            {
-              pending: "Selecting...",
-              success: {
-                render({ data }) {
-                  return "Selected Successfully!";
-                },
-              },
-              error: {
-                render({ data }) {
-                  return `Error: ${data.message}`;
-                },
-              },
-            };
+          });
         }
       });
   };

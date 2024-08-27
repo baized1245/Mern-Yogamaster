@@ -16,10 +16,11 @@ const Login = () => {
 
     const data = new FormData(e.target);
     const formData = Object.fromEntries(data);
-    // console.log(formData);
+    console.log(formData);
     login(formData.email, formData.password)
       .then(() => {
-        navigate(location.state?.form || "/dashboard");
+        alert("Login successful!");
+        navigate(location.state?.form || "dashboard");
       })
       .catch((err) => {
         setError(err.code);

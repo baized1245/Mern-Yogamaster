@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import {
   AiOutlineLock,
@@ -8,17 +8,59 @@ import {
   AiOutlineUser,
 } from "react-icons/ai";
 import { HiOutlineLocationMarker } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import GoogleLogin from "../../components/Social/GoogleLogin";
+import { AuthContext } from "../../utilities/providers/AuthProvider";
+import axios from "axios";
 
 const Register = () => {
+  const navigate = useNavigate();
+  const { signup, updateUser, setError } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
+
     watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    setError("");
+    signup(data.email, data.password).then((result) => {
+      const user = result.user;
+      if (user) {
+        return updateUser(data.name, data.photoUrl)
+          .then(() => {
+            const userImp = {
+              name: user?.displayName,
+              email: user?.email,
+              photoURL: user?.photoURL,
+              role: "user",
+              gender: data.gender,
+              phone: data.phone,
+              address: data.address,
+            };
+            if (user.email && user.displayName) {
+              return axios
+                .post("http://localhost:5000/new-user", userImp)
+                .then(() => {
+                  setError("");
+                  navigate("/");
+                  return "Registration Successful!";
+                })
+                .catch((err) => {
+                  throw new Error(err);
+                });
+            }
+          })
+          .catch((err) => {
+            setError(err.code);
+            throw new Error(err);
+          });
+      }
+    });
+  };
+
+  const password = watch("password", "");
   return (
     <div className="flex justify-center items-center  pt-14 bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md">
@@ -74,7 +116,7 @@ const Register = () => {
                 {...register("password", {
                   required: true,
                   validate: (value) =>
-                    value === password || "Password does not match",
+                    value === password || "Password not matched",
                 })}
                 className="w-full border-gray-300 border rounded-md py-2 px-4 focus:outline-none focus:ring focus:border-blue-300"
               />
@@ -123,7 +165,7 @@ const Register = () => {
                 Photo URL
               </label>
               <input
-                type="password"
+                type="url"
                 placeholder="Photo URL"
                 {...register("photoUrl")}
                 className="w-full border-gray-300 border rounded-md py-2 px-4 focus:outline-none focus:ring focus:border-blue-300"

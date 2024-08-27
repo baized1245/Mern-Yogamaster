@@ -28,17 +28,19 @@ const AuthProvider = ({ children }) => {
       return await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
       setError(error.code);
+      setLoader(false);
       throw error;
     }
   };
 
   //   login user
-  const login = async () => {
+  const login = async (email, password) => {
     try {
       setLoader(true);
       return await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       setError(error.code);
+      setLoader(false);
       throw error;
     }
   };
@@ -47,6 +49,7 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       return await signOut(auth);
+      setLoader(false);
     } catch (error) {
       setError(error.code);
       throw error;
@@ -75,13 +78,15 @@ const AuthProvider = ({ children }) => {
       return await signInWithPopup(auth, googleProvider);
     } catch (error) {
       setError(error.code);
+      setLoader(false);
       throw error;
     }
   };
 
   // observer for user
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // Corrected usage of `onAuthStateChanged`
       setUser(user);
 
       if (user) {
@@ -104,6 +109,30 @@ const AuthProvider = ({ children }) => {
 
     return () => unsubscribe();
   }, [auth]);
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged((user) => {
+  //     setUser(user);
+
+  //     if (user) {
+  //       axios
+  //         .post("http://localhost:5000/api/set-token", {
+  //           email: user.email,
+  //           name: user.displayName,
+  //         })
+  //         .then((data) => {
+  //           if (data.data.token) {
+  //             localStorage.setItem("token", data.data.token);
+  //             setLoader(false);
+  //           }
+  //         });
+  //     } else {
+  //       localStorage.removeItem("token");
+  //       setLoader(false);
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [auth]);
 
   const contextValue = {
     user,
